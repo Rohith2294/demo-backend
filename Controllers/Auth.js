@@ -79,7 +79,7 @@ exports.Login = async (req, res) => {
                 res
                     .status(200)
                     .json({
-                        message: "Login Successfullysss",
+                        message: "Login Successfully",
                         token: loginuserData.token,
                         userDetails: loginuserData,
                     });
