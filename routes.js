@@ -1,10 +1,10 @@
 const express=require('express')
-const usersData=require('./Controllers/usersData')
+const usersData=require('./Controllers/Contacts')
 const Mainuser=require('./Controllers/Auth')
 const router=express.Router();
 const isAuthss=require('./Middleware/Auth')
 
-router.post("/createUser",isAuthss,usersData.createUserasync)
+router.post("/createContact",isAuthss,usersData.createContact)
 router.get("/getUser",isAuthss,usersData.getUserdata)
 router.post("/getallusers",isAuthss,usersData.getallusers)
 router.post("/editUser",isAuthss,usersData.editUser)

@@ -9,7 +9,7 @@ const httpServer = createServer(app);
 
 // Constants
 const MONGODB_URI = 'mongodb+srv://rohithpasupuleti:6JKa7aoEyWrkB8UH@rohithclustor.9nkqpd3.mongodb.net/?retryWrites=true&w=majority&appName=Rohithclustor';
-const PORT = 3001;
+const PORT = 3003;
 
 // Middlewares
 app.use(cors({

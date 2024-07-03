@@ -10,7 +10,7 @@ const MainUsersSchema = new mongoose.Schema({
     Active: Number,
     otp:String,
     newPassword:String,
-    ConfirmPassword:String
-
+    ConfirmPassword:String,
+    contacts:Array
 })
-module.exports= mongoose.model('MainUsers', MainUsersSchema)
+module.exports= mongoose.model('Users', MainUsersSchema)

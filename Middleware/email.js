@@ -1,6 +1,6 @@
 var nodemailer = require('nodemailer');
 
-const User = require("../Controllers/usersData")
+const User = require("../Controllers/Contacts")
 
       function sendMail(toEmail,userOtp,firstName){
         console.log(toEmail,userOtp)

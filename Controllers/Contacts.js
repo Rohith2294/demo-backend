@@ -1,38 +1,51 @@
 
-const userModule = require('./../modal/ModalsControl')
+const Contact = require('../modal/Contacts')
+const User = require('../modal/Users')
 var jwt = require('jsonwebtoken')
-exports.createUserasync = async (req, res) => {
-    const { name, age } = req.body;
+const moment = require('moment');
 
-    if (!name || !age) {
+
+exports.createContact = async (req, res) => {
+    const { name, image, phoneNumber, age, address, userId } = req.body;
+
+    if (!name || !image || !phoneNumber || !address || !age) {
         return res.status(400).json({ error: 'Fields are empty' });
-    }
-
-    else if (typeof age !== 'number') {
+    } else if (typeof phoneNumber !== 'number') {
+        return res.status(401).json({ error: 'Phone number must be a number' });
+    } else if (typeof age !== 'number') {
         return res.status(401).json({ error: 'Age must be a number' });
     }
     try {
-        const finddublicateuser = await userModule.findOne({ name,Active:1 })
-        if (finddublicateuser) {
-            return res.status(401).json({ error: 'user ALredyCreated' });
+        let now = moment().format("YYYY-MM-DDTHH:mm:ss");
+        const findUser = await User.findOne({ _id: userId, Active: 1 });
+        
+        if (!findUser) {
+            return res.status(401).json({ error: 'User not found' });
         }
-        const obj = {
+
+        const createdContact = new Contact({
             name: name,
             age: age,
-            Active: 1
-        };
-        await userModule.insertMany(obj);
-        return res.status(200).json({ message: 'User created successfully', user: obj });
-    }
+            image: image,
+            phoneNumber: phoneNumber,
+            address: address,
+            Active: 1,
+            createdBy: userId,
+            createdAt: now,
+            updatedAt: now,
+        });
 
-    catch (error) {
+        await createdContact.save();
+        findUser.contacts.push(createdContact._id);  // Assuming 'contacts' is an array of ObjectId
+        await findUser.save();
+
+        return res.status(200).json({ message: 'Contact created successfully', Contact: createdContact });
+    } catch (error) {
         console.error(error);
         return res.status(500).json({ error: 'An unexpected error occurred' });
     }
-
-
-
 };
+
 exports.getallusers = async (req, res) => {
 
     try {

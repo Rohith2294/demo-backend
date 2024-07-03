@@ -1,4 +1,4 @@
-const MainuserModel = require('./../modal/MainUsersModel')
+const MainuserModel = require('../modal/Users')
 var jwt = require('jsonwebtoken')
 const date = require("date-and-time");
 const lib1 = require("../Middleware/email");
@@ -33,6 +33,7 @@ exports.signup = async (req, res) => {
         phonenumber: phonenumber,
         gender: gender,
         CreatedTime: now,
+        contacts:[],
         Active: 0,
     })
     // Save both the User and Admin documents
