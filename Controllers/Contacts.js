@@ -1,47 +1,76 @@
 
+const { response } = require('express');
 const Contact = require('../modal/Contacts')
 const User = require('../modal/Users')
 var jwt = require('jsonwebtoken')
 const moment = require('moment');
+const mongoose = require('mongoose');
+
 
 
 exports.createContact = async (req, res) => {
-    const { name, image, phoneNumber, age, address, userId } = req.body;
-
-    if (!name || !image || !phoneNumber || !address || !age) {
-        return res.status(400).json({ error: 'Fields are empty' });
-    } else if (typeof phoneNumber !== 'number') {
-        return res.status(401).json({ error: 'Phone number must be a number' });
-    } else if (typeof age !== 'number') {
-        return res.status(401).json({ error: 'Age must be a number' });
-    }
     try {
-        let now = moment().format("YYYY-MM-DDTHH:mm:ss");
-        const findUser = await User.findOne({ _id: userId, Active: 1 });
-        
-        if (!findUser) {
-            return res.status(401).json({ error: 'User not found' });
+        const { name, image, phoneNumber, age, address, userId } = req.body;
+        const now = new Date();
+
+        // Validate userId format
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ message: "Invalid userId" });
         }
 
+        // Log the userId to debug
+        console.log('userId:', userId);
+
+        // Find the user
+
+        // Log the result to debug
+
+        if (!userId) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Create a new contact
         const createdContact = new Contact({
-            name: name,
-            age: age,
-            image: image,
-            phoneNumber: phoneNumber,
-            address: address,
+            name,
+            age,
+            image,
+            phoneNumber,
+            address,
             Active: 1,
-            createdBy: userId,
+            CreatedBy: userId,
             createdAt: now,
             updatedAt: now,
         });
+        return res.status(201).json({
+            message: "Contact created successfully",
+            Contact: createdContact,
+        });
 
-        await createdContact.save();
-        findUser.contacts.push(createdContact._id);  // Assuming 'contacts' is an array of ObjectId
-        await findUser.save();
-
-        return res.status(200).json({ message: 'Contact created successfully', Contact: createdContact });
     } catch (error) {
-        console.error(error);
+        console.error("Error Creating Contact:", error);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+
+exports.getContacts = async (req, res, next) => {
+
+    try {
+        const {userId} = req.body;
+        console.log(userId, 'userId');
+        if (!userId) {
+            return res.status(400).json({ error: 'User ID is required' });
+        }
+
+        const user = await Contact.find({ CreatedBy: userId });
+        console.log(user, 'ss');
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        console.log(user, "Retrieved user details");
+        return res.status(200).json({ message: 'get Contacts', user });
+    } catch (err) {
+        console.error(err);
         return res.status(500).json({ error: 'An unexpected error occurred' });
     }
 };

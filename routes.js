@@ -5,7 +5,7 @@ const router=express.Router();
 const isAuthss=require('./Middleware/Auth')
 
 router.post("/createContact",isAuthss,usersData.createContact)
-router.get("/getUser",isAuthss,usersData.getUserdata)
+router.get("/getContacts",isAuthss,usersData.getContacts)
 router.post("/getallusers",isAuthss,usersData.getallusers)
 router.post("/editUser",isAuthss,usersData.editUser)
 router.post("/deleteUser",isAuthss,usersData.deleteuser)

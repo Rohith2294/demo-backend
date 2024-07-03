@@ -8,8 +8,8 @@ const ContactsSchema = new mongoose.Schema({
     phoneNumber: Number,
     address: String,
     userId: String,
-    createdBy:String,
+    CreatedBy:String,
     createdAt:String,
-    updatedAt:String
+    updatedAt:String,
 })
-module.exports = mongoose.model('Contacts', ContactsSchema)
+module.exports = mongoose.model('contacts', ContactsSchema)
