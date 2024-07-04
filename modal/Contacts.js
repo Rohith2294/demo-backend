@@ -1,15 +1,35 @@
 
 const mongoose = require('mongoose')
 const ContactsSchema = new mongoose.Schema({
-    name: String,
-    age: Number,
-    Active: Number,
-    image: String,
-    phoneNumber: Number,
-    address: String,
-    userId: String,
-    CreatedBy:String,
-    createdAt:String,
-    updatedAt:String,
+    name:{
+        type:String
+    },
+    age:{
+        type:Number
+    },
+    Active:{
+        type:Number
+    },
+    image:{
+        type:String
+    },
+    phoneNumber:{
+        type:Number
+    },
+    address:{
+        type:String
+    },
+    userId:{
+        type:String
+    },
+    CreatedBy:{
+        type:String
+    },
+    createdAt:{
+        type:String
+    },
+    updatedAt:{
+        type:String
+    }
 })
 module.exports = mongoose.model('contacts', ContactsSchema)

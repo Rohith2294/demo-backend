@@ -1,9 +1,10 @@
-const MainuserModel = require('../modal/Users')
+
 var jwt = require('jsonwebtoken')
 const date = require("date-and-time");
 const lib1 = require("../Middleware/email");
 const bcrypt = require("bcrypt");
 const otpGenerator = require("otp-generator");
+const User = require('../modal/User');
 exports.signup = async (req, res) => {
     const email = req.body.email
     const password = req.body.password
@@ -14,7 +15,7 @@ exports.signup = async (req, res) => {
     let date1 = new Date();
     let now = date.format(date1, "YYYY-MM-DDTHH:mm:ss");
     const bcryptPassword = await bcrypt.hash(password, 7);
-    const findEmail = await MainuserModel.findOne({ email: email })
+    const findEmail = await User.findOne({ email: email })
     if (findEmail) {
         return res.status(401).json({ error: `a user already registered with this id ${email}` })
     }
@@ -25,7 +26,7 @@ exports.signup = async (req, res) => {
         upperCase: false,
         specialChars: false,
     });
-    const MainUserData = new MainuserModel({
+    const UserData = new User({
         otp: otp,
         name: name,
         email: email,
@@ -37,14 +38,14 @@ exports.signup = async (req, res) => {
         Active: 0,
     })
     // Save both the User and Admin documents
-    const [TrainerResult] = await Promise.all([
-        MainUserData.save()
+    const [UserDataResult] = await Promise.all([
+        UserData.save()
     ]);
-    console.log(MainUserData, 'mainuserdatat')
-    if (TrainerResult) {
+    console.log(UserData, 'UserDatat')
+    if (UserDataResult) {
         lib1.sendMail(email, otp, name);
-        console.log(MainUserData, 'UserData')
-        res.status(200).json({ message: 'Registration Successfull', MainUserData })
+        console.log(UserData, 'UserData')
+        res.status(200).json({ message: 'Registration Successfull', UserData })
     }
 
 }
@@ -56,10 +57,13 @@ exports.Login = async (req, res) => {
     if (!email || !password) {
         return res.status(400).json({ error: "Enter All Fields" })
     }
-    await MainuserModel.findOne({ email: email, Active: 1 }).then((userData) => {
+    const getAllUsers=User.find({Active:1})
+    console.log(getAllUsers,'getAllUsers')
+    await User.findOne({ email: email, Active: 1 }).then((userData) => {
         if (!userData) {
             return res.status(401).json({ error: "Email Not Found" })
         }
+        console.log(userData,'userData')
         loginuserData = userData
 
         return bcrypt.compare(password, userData.password);
@@ -102,7 +106,7 @@ exports.verifyOtp = async (req, res) => {
             return res.status(401).json({ error: 'otp is Required' });
         }
 
-        const findUser = await MainuserModel.findOne({ email: email });
+        const findUser = await User.findOne({ email: email });
 
         if (!findUser) {
             return res.status(401).json({ error: 'User Not Found' });
@@ -112,7 +116,7 @@ exports.verifyOtp = async (req, res) => {
         }
         if (findUser.Active == 0) {
             // Update user's active status
-            const updatedUser = await MainuserModel.findOneAndUpdate(
+            const updatedUser = await User.findOneAndUpdate(
                 { email: email },
                 { $set: { Active: 1 } },
                 { new: true }
@@ -140,7 +144,7 @@ exports.ForgotPassword = async (req, res) => {
         }
 
 
-        const findUser = await MainuserModel.findOne({ email: email });
+        const findUser = await User.findOne({ email: email });
 
         if (!findUser) {
             return res.status(401).json({ error: 'User Not Found' });
@@ -153,7 +157,7 @@ exports.ForgotPassword = async (req, res) => {
             specialChars: false,
         });
         // Update user's active status
-        const updatedUser = await MainuserModel.findOneAndUpdate(
+        const updatedUser = await User.findOneAndUpdate(
             { email: email, Active: 1 },
             { $set: { otp: otp } },
             { new: true }
@@ -179,7 +183,7 @@ exports.CreatePassword = async (req, res) => {
         if (newPassword !== ConfirmPassword) {
             return res.status(401).json({ error: 'New Password And ConfirmPassword Should be same' });
         }
-        const findUser = await MainuserModel.findOne({ email: email });
+        const findUser = await User.findOne({ email: email });
         console.log(findUser, 'finduser')
         if (!findUser) {
             return res.status(401).json({ error: 'User Not Found' });
@@ -202,7 +206,7 @@ exports.UpdatedPassword = async (req, res) => {
         if (!email) {
             return res.status(401).json({ error: 'Email Is Required' });
         }
-        const findUser = await MainuserModel.findOne({ email: email });
+        const findUser = await User.findOne({ email: email });
         if (!findUser) {
             return res.status(401).json({ error: 'User Not Found' });
         }
