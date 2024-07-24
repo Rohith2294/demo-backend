@@ -34,6 +34,13 @@ const UserSchema = new Schema({
     contacts:{
         type:Array
     },
+
+    Projects:{
+        type:Array
+    },
+    contacts:{
+        type:Array
+    },
     contactId:{
         type:String
     }
