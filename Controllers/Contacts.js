@@ -71,7 +71,6 @@ exports.getContacts = async (req, res, next) => {
     }
 };
 exports.getallContactss = async (req, res) => {
-
     try {
         const Contacts = await Contact.find({ Active: 1 });
         console.log(Contacts, 'ss');
@@ -84,8 +83,6 @@ exports.getallContactss = async (req, res) => {
         console.error(err);
         return res.status(500).json({ error: 'An unexpected error occurred' });
     }
-
-
 }
 exports.getContactdata = async (req, res, next) => {
 
